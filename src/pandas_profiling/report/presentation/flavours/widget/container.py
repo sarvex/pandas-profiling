@@ -7,10 +7,7 @@ from pandas_profiling.report.presentation.core.renderable import Renderable
 
 
 def get_name(item: Renderable) -> str:
-    if hasattr(item, "name"):
-        return item.name
-    else:
-        return item.anchor_id
+    return item.name if hasattr(item, "name") else item.anchor_id
 
 
 def get_tabs(items: List[Renderable]) -> widgets.Tab:
@@ -62,7 +59,7 @@ def get_batch_grid(
 ) -> widgets.GridBox:
     layout = widgets.Layout(
         width="100%",
-        grid_template_columns=" ".join([f"{int(100 / batch_size)}%"] * batch_size),
+        grid_template_columns=" ".join([f"{100 // batch_size}%"] * batch_size),
     )
     out = []
     for item in items:

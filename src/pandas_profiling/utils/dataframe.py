@@ -37,7 +37,7 @@ def is_supported_compression(file_extension: str) -> bool:
         Pandas can handle on the fly decompression from the following extensions: ‘.bz2’, ‘.gz’, ‘.zip’, or ‘.xz’
         (otherwise no decompression). If using ‘.zip’, the ZIP file must contain exactly one data file to be read in.
     """
-    return file_extension.lower() in [".bz2", ".gz", ".xz", ".zip"]
+    return file_extension.lower() in {".bz2", ".gz", ".xz", ".zip"}
 
 
 def remove_suffix(text: str, suffix: str) -> str:
@@ -162,7 +162,10 @@ def expand_mixed(df: pd.DataFrame, types: Any = None) -> pd.DataFrame:
         non_nested_enumeration = (
             df[column_name]
             .dropna()
-            .map(lambda x: type(x) in types and not any(type(y) in types for y in x))
+            .map(
+                lambda x: type(x) in types
+                and all(type(y) not in types for y in x)
+            )
         )
 
         if non_nested_enumeration.all():
@@ -200,7 +203,7 @@ def slugify(value: str, allow_unicode: bool = False) -> str:
     underscores, or hyphens. Convert to lowercase. Also strip leading and
     trailing whitespace, dashes, and underscores.
     """
-    value = str(value)
+    value = value
     if allow_unicode:
         value = unicodedata.normalize("NFKC", value)
     else:

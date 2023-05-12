@@ -86,13 +86,11 @@ def get_dataset_overview(config: Settings, summary: dict) -> Renderable:
 
 
 def get_dataset_schema(metadata: dict) -> Container:
-    about_dataset = []
-    for key in ["description", "creator", "author"]:
-        if key in metadata and len(metadata[key]) > 0:
-            about_dataset.append(
-                {"name": key.capitalize(), "value": fmt(metadata[key])}
-            )
-
+    about_dataset = [
+        {"name": key.capitalize(), "value": fmt(metadata[key])}
+        for key in ["description", "creator", "author"]
+        if key in metadata and len(metadata[key]) > 0
+    ]
     if "url" in metadata:
         about_dataset.append(
             {
@@ -209,15 +207,13 @@ def get_dataset_items(config: Settings, summary: dict, alerts: list) -> list:
 
     metadata = {key: config.dataset.dict()[key] for key in config.dataset.dict().keys()}
 
-    if len(metadata) > 0 and any(len(value) > 0 for value in metadata.values()):
+    if metadata and any(len(value) > 0 for value in metadata.values()):
         items.append(get_dataset_schema(metadata))
 
-    column_details = {
+    if column_details := {
         key: config.variables.descriptions[key]
         for key in config.variables.descriptions.keys()
-    }
-
-    if len(column_details) > 0:
+    }:
         items.append(get_dataset_column_definitions(column_details))
 
     if alerts:

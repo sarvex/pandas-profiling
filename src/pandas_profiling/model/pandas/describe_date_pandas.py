@@ -29,12 +29,10 @@ def pandas_describe_date_1d(
     Returns:
         A dict containing calculated series description values.
     """
-    summary.update(
-        {
-            "min": pd.Timestamp.to_pydatetime(series.min()),
-            "max": pd.Timestamp.to_pydatetime(series.max()),
-        }
-    )
+    summary |= {
+        "min": pd.Timestamp.to_pydatetime(series.min()),
+        "max": pd.Timestamp.to_pydatetime(series.max()),
+    }
 
     summary["range"] = summary["max"] - summary["min"]
 
@@ -43,5 +41,5 @@ def pandas_describe_date_1d(
     if config.vars.num.chi_squared_threshold > 0.0:
         summary["chi_squared"] = chi_square(values)
 
-    summary.update(histogram_compute(config, values, summary["n_distinct"]))
+    summary |= histogram_compute(config, values, summary["n_distinct"])
     return config, values, summary

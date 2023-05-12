@@ -89,15 +89,11 @@ def pandas_describe_numeric_1d(
     infinity_index = value_counts.index.isin(infinity_values)
     summary["n_infinite"] = value_counts.loc[infinity_index].sum()
 
-    if 0 in value_counts.index:
-        summary["n_zeros"] = value_counts.loc[0]
-    else:
-        summary["n_zeros"] = 0
-
+    summary["n_zeros"] = value_counts.loc[0] if 0 in value_counts.index else 0
     stats = summary
 
     if isinstance(series.dtype, _IntegerDtype):
-        stats.update(numeric_stats_pandas(series))
+        stats |= numeric_stats_pandas(series)
         present_values = series.astype(str(series.dtype).lower())
         finite_values = present_values
     else:
@@ -105,11 +101,7 @@ def pandas_describe_numeric_1d(
         finite_values = present_values[np.isfinite(present_values)]
         stats.update(numeric_stats_numpy(present_values, series, summary))
 
-    stats.update(
-        {
-            "mad": mad(present_values),
-        }
-    )
+    stats["mad"] = mad(present_values)
 
     if chi_squared_threshold > 0.0:
         stats["chi_squared"] = chi_square(finite_values)

@@ -26,7 +26,7 @@ def get_custom_sample(sample: dict) -> List[Sample]:
     if "caption" not in sample:
         sample["caption"] = None
 
-    samples = [
+    return [
         Sample(
             id="custom",
             data=sample["data"],
@@ -34,4 +34,3 @@ def get_custom_sample(sample: dict) -> List[Sample]:
             caption=sample["caption"],
         )
     ]
-    return samples

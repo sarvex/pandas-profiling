@@ -161,23 +161,20 @@ def render_image(config: Settings, summary: dict) -> dict:
                 redact=redact,
             )
         ]
-        for key, counts in summary["exif_data"].items():
-            if key == "exif_keys":
-                continue
-
-            items.append(
-                FrequencyTable(
-                    freq_table(
-                        freqtable=counts,
-                        n=summary["n"],
-                        max_number_to_print=n_freq_table_max,
-                    ),
-                    name=key,
-                    anchor_id=f"{varid}_exif_{key}",
-                    redact=redact,
-                )
+        items.extend(
+            FrequencyTable(
+                freq_table(
+                    freqtable=counts,
+                    n=summary["n"],
+                    max_number_to_print=n_freq_table_max,
+                ),
+                name=key,
+                anchor_id=f"{varid}_exif_{key}",
+                redact=redact,
             )
-
+            for key, counts in summary["exif_data"].items()
+            if key != "exif_keys"
+        )
         image_items.append(
             Container(
                 items,

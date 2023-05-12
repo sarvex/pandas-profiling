@@ -32,7 +32,7 @@ def get_missing_items(config: Settings, summary: dict) -> list:
     Returns:
         A list with the missing diagrams
     """
-    items = [
+    return [
         ImageWidget(
             item["matrix"],
             image_format=config.plot.image_format,
@@ -43,8 +43,6 @@ def get_missing_items(config: Settings, summary: dict) -> list:
         )
         for key, item in summary["missing"].items()
     ]
-
-    return items
 
 
 def render_variables_section(config: Settings, dataframe_summary: dict) -> list:
@@ -95,8 +93,8 @@ def render_variables_section(config: Settings, dataframe_summary: dict) -> list:
             "alert_fields": alert_fields,
         }
 
-        template_variables.update(summary)
-        
+        template_variables |= summary
+
         # Per type template variables
         render_map_type = render_map.get(summary["type"], "Unsupported")
         template_variables.update(
@@ -104,11 +102,7 @@ def render_variables_section(config: Settings, dataframe_summary: dict) -> list:
         )
 
         # Ignore these
-        if reject_variables:
-            ignore = AlertType.REJECTED in alert_types
-        else:
-            ignore = False
-
+        ignore = AlertType.REJECTED in alert_types if reject_variables else False
         bottom = None
         if "bottom" in template_variables and template_variables["bottom"] is not None:
             btn = ToggleButton("Toggle details", anchor_id=template_variables["varid"])
@@ -178,11 +172,15 @@ def get_sample_items(sample: dict) -> List[Sample]:
     Returns:
         List of sample items to show in the interface.
     """
-    items = [
-        Sample(sample=obj.data, name=obj.name, anchor_id=obj.id, caption=obj.caption)
+    return [
+        Sample(
+            sample=obj.data,
+            name=obj.name,
+            anchor_id=obj.id,
+            caption=obj.caption,
+        )
         for obj in sample
     ]
-    return items
 
 
 def get_scatter_matrix(config: Settings, scatter_matrix: dict) -> list:

@@ -38,21 +38,20 @@ def render_file(config: Settings, summary: dict) -> dict:
         "file_modified_time": "Modified",
     }
 
-    for file_date_id, description in file_dates.items():
-        if file_date_id in summary:
-            file_tabs.append(
-                FrequencyTable(
-                    freq_table(
-                        freqtable=summary[file_date_id].value_counts(),
-                        n=summary["n"],
-                        max_number_to_print=n_freq_table_max,
-                    ),
-                    name=description,
-                    anchor_id=f"{varid}{file_date_id}",
-                    redact=False,
-                )
-            )
-
+    file_tabs.extend(
+        FrequencyTable(
+            freq_table(
+                freqtable=summary[file_date_id].value_counts(),
+                n=summary["n"],
+                max_number_to_print=n_freq_table_max,
+            ),
+            name=description,
+            anchor_id=f"{varid}{file_date_id}",
+            redact=False,
+        )
+        for file_date_id, description in file_dates.items()
+        if file_date_id in summary
+    )
     file_tab = Container(
         file_tabs,
         name="File",

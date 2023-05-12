@@ -38,7 +38,5 @@ def pandas_describe_supported(
         "is_unique": unique_count == count and count > 0,
         "n_unique": unique_count,
         "p_unique": unique_count / count if count > 0 else 0,
-    }
-    stats.update(series_description)
-
+    } | series_description
     return config, series, stats

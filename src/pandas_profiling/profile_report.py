@@ -101,7 +101,7 @@ class ProfileReport(SerializeReport, ExpectationsReport):
             report_config = report_config.update(Config.get_arg_groups("dark_mode"))
         if orange_mode:
             report_config = report_config.update(Config.get_arg_groups("orange_mode"))
-        if len(kwargs) > 0:
+        if kwargs:
             report_config = report_config.update(Config.shorthands(kwargs))
 
         self.df = df
@@ -132,10 +132,9 @@ class ProfileReport(SerializeReport, ExpectationsReport):
                 "'subset' parameter should be None, 'rendering' or 'report'"
             )
 
-        if subset is None or subset in ["rendering", "report"]:
-            self._widgets = None
-            self._json = None
-            self._html = None
+        self._widgets = None
+        self._json = None
+        self._html = None
 
         if subset is None or subset == "report":
             self._report = None
@@ -251,7 +250,7 @@ class ProfileReport(SerializeReport, ExpectationsReport):
             if not self.config.html.inline:
                 self.config.html.assets_path = str(output_file.parent)
                 if self.config.html.assets_prefix is None:
-                    self.config.html.assets_prefix = str(output_file.stem) + "_assets"
+                    self.config.html.assets_prefix = f"{str(output_file.stem)}_assets"
                 create_html_assets(self.config, output_file)
 
             data = self.to_html()
@@ -328,23 +327,22 @@ class ProfileReport(SerializeReport, ExpectationsReport):
         def encode_it(o: Any) -> Any:
             if isinstance(o, dict):
                 return {encode_it(k): encode_it(v) for k, v in o.items()}
+            if isinstance(o, (bool, int, float, str)):
+                return o
+            elif isinstance(o, list):
+                return [encode_it(v) for v in o]
+            elif isinstance(o, set):
+                return {encode_it(v) for v in o}
+            elif isinstance(o, (pd.DataFrame, pd.Series)):
+                return encode_it(o.to_dict(orient="records"))
+            elif isinstance(o, np.ndarray):
+                return encode_it(o.tolist())
+            elif isinstance(o, Sample):
+                return encode_it(o.dict())
+            elif isinstance(o, np.generic):
+                return o.item()
             else:
-                if isinstance(o, (bool, int, float, str)):
-                    return o
-                elif isinstance(o, list):
-                    return [encode_it(v) for v in o]
-                elif isinstance(o, set):
-                    return {encode_it(v) for v in o}
-                elif isinstance(o, (pd.DataFrame, pd.Series)):
-                    return encode_it(o.to_dict(orient="records"))
-                elif isinstance(o, np.ndarray):
-                    return encode_it(o.tolist())
-                elif isinstance(o, Sample):
-                    return encode_it(o.dict())
-                elif isinstance(o, np.generic):
-                    return o.item()
-                else:
-                    return str(o)
+                return str(o)
 
         description = self.description_set
 

@@ -30,10 +30,7 @@ def string_is_bool(series: pd.Series, state: dict, k: Settings) -> bool:
     def tester(s: pd.Series, state: dict) -> bool:
         return s.str.lower().isin(k.keys()).all()
 
-    if pdt.is_categorical_dtype(series):
-        return False
-
-    return tester(series, state)
+    return False if pdt.is_categorical_dtype(series) else tester(series, state)
 
 
 def string_to_bool(series: pd.Series, state: dict, k: Settings) -> pd.Series:
@@ -59,7 +56,7 @@ def to_category(series: pd.Series, state: dict) -> pd.Series:
 
 @series_handle_nulls
 def series_is_string(series: pd.Series, state: dict) -> bool:
-    if not all(isinstance(v, str) for v in series.values[0:5]):
+    if not all(isinstance(v, str) for v in series.values[:5]):
         return False
     try:
         return (series.astype(str).values == series.values).all()

@@ -58,6 +58,6 @@ def pandas_describe_path_1d(
     if not hasattr(series, "str"):
         raise ValueError("series should have .str accessor")
 
-    summary.update(path_summary(series))
+    summary |= path_summary(series)
 
     return config, series, summary

@@ -20,7 +20,7 @@ def test_report_with_custom_pie_chart_colors():
         interactions=None,
     )
     profile.config.plot.pie.colors = list(matplotlib_colors.keys())
-    
+
     html_report = profile.to_html()
     for c, hex_code in matplotlib_colors.items():
-        assert "fill: {}".format(hex_code) in html_report, f"Missing color code of {c}"
+        assert f"fill: {hex_code}" in html_report, f"Missing color code of {c}"

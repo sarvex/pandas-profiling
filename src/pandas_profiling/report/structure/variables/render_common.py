@@ -9,7 +9,7 @@ def render_common(config: Settings, summary: dict) -> dict:
     n_extreme_obs = config.n_extreme_obs
     n_freq_table_max = config.n_freq_table_max
 
-    template_variables = {
+    return {
         # TODO: with nan
         "freq_table_rows": freq_table(
             freqtable=summary["value_counts_without_nan"],
@@ -27,5 +27,3 @@ def render_common(config: Settings, summary: dict) -> dict:
             n=summary["n"],
         ),
     }
-
-    return template_variables

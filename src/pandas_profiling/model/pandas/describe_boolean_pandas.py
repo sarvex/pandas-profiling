@@ -26,6 +26,6 @@ def pandas_describe_boolean_1d(
     """
 
     value_counts = summary["value_counts_without_nan"]
-    summary.update({"top": value_counts.index[0], "freq": value_counts.iloc[0]})
+    summary |= {"top": value_counts.index[0], "freq": value_counts.iloc[0]}
 
     return config, series, summary

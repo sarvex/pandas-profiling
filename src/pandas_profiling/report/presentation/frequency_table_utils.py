@@ -18,9 +18,7 @@ def freq_table(freqtable: pd.Series, n: int, max_number_to_print: int) -> List[D
 
     # TODO: replace '' by '(Empty)' ?
 
-    if max_number_to_print > n:
-        max_number_to_print = n
-
+    max_number_to_print = min(max_number_to_print, n)
     if max_number_to_print < len(freqtable):
         freq_other = np.sum(freqtable.iloc[max_number_to_print:])
         min_freq = freqtable.values[max_number_to_print]
@@ -40,19 +38,17 @@ def freq_table(freqtable: pd.Series, n: int, max_number_to_print: int) -> List[D
     if max_freq == 0:
         return []
 
-    rows = []
-    for label, freq in freqtable.iloc[0:max_number_to_print].items():
-        rows.append(
-            {
-                "label": label,
-                "width": freq / max_freq,
-                "count": freq,
-                "percentage": float(freq) / n,
-                "n": n,
-                "extra_class": "",
-            }
-        )
-
+    rows = [
+        {
+            "label": label,
+            "width": freq / max_freq,
+            "count": freq,
+            "percentage": float(freq) / n,
+            "n": n,
+            "extra_class": "",
+        }
+        for label, freq in freqtable.iloc[:max_number_to_print].items()
+    ]
     if freq_other > min_freq:
         other_count = str(freqtable.count() - max_number_to_print)
         rows.append(
@@ -99,7 +95,7 @@ def extreme_obs_table(
     obs_to_print = freqtable.iloc[:number_to_print]
     max_freq = obs_to_print.max()
 
-    rows = [
+    return [
         {
             "label": label,
             "width": freq / max_freq if max_freq != 0 else 0,
@@ -110,5 +106,3 @@ def extreme_obs_table(
         }
         for label, freq in obs_to_print.items()
     ]
-
-    return rows

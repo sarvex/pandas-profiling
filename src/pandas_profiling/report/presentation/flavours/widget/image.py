@@ -18,9 +18,8 @@ class WidgetImage(Image):
             image = f'<img src="{image}" alt="{alt}" />'
 
         widget = widgets.HTML(image)
-        if "caption" in self.content and self.content["caption"] is not None:
-            caption = self.content["caption"]
-            caption = widgets.HTML(f'<p style="color: #999"><em>{caption}</em></p>')
-            return widgets.VBox([widget, caption])
-        else:
+        if "caption" not in self.content or self.content["caption"] is None:
             return widget
+        caption = self.content["caption"]
+        caption = widgets.HTML(f'<p style="color: #999"><em>{caption}</em></p>')
+        return widgets.VBox([widget, caption])

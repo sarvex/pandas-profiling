@@ -24,13 +24,11 @@ def pandas_describe_generic(
     # number of observations in the Series
     length = len(series)
 
-    summary.update(
-        {
-            "n": length,
-            "p_missing": summary["n_missing"] / length if length > 0 else 0,
-            "count": length - summary["n_missing"],
-            "memory_size": series.memory_usage(deep=config.memory_deep),
-        }
-    )
+    summary |= {
+        "n": length,
+        "p_missing": summary["n_missing"] / length if length > 0 else 0,
+        "count": length - summary["n_missing"],
+        "memory_size": series.memory_usage(deep=config.memory_deep),
+    }
 
     return config, series, summary

@@ -78,17 +78,16 @@ def format_summary(summary: dict) -> dict:
     def fmt(v: Any) -> Any:
         if isinstance(v, dict):
             return {k: fmt(va) for k, va in v.items()}
+        if isinstance(v, pd.Series):
+            return fmt(v.to_dict())
+        elif (
+            isinstance(v, tuple)
+            and len(v) == 2
+            and all(isinstance(x, np.ndarray) for x in v)
+        ):
+            return {"counts": v[0].tolist(), "bin_edges": v[1].tolist()}
         else:
-            if isinstance(v, pd.Series):
-                return fmt(v.to_dict())
-            elif (
-                isinstance(v, tuple)
-                and len(v) == 2
-                and all(isinstance(x, np.ndarray) for x in v)
-            ):
-                return {"counts": v[0].tolist(), "bin_edges": v[1].tolist()}
-            else:
-                return v
+            return v
 
     summary = {k: fmt(v) for k, v in summary.items()}
     return summary

@@ -26,7 +26,7 @@ def test_dataset_schema():
     html = report.to_html()
 
     assert "<p class=h4>Dataset</p>" in html
-    for key in metadata.keys():
+    for key in metadata:
         if not key.startswith("copyright_") and key != "url":
             assert f"<th>{key.capitalize()}</th>" in html
     assert "<tr><th>Copyright</th><td>(c) RandoCorp LLC 2020</td></tr>"

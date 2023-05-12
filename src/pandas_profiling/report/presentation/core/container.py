@@ -28,11 +28,10 @@ class Container(Renderable):
         return text
 
     def __repr__(self) -> str:
-        if "name" in self.content:
-            name = self.content["name"]
-            return f"Container(name={name})"
-        else:
+        if "name" not in self.content:
             return "Container"
+        name = self.content["name"]
+        return f"Container(name={name})"
 
     def render(self) -> Any:
         raise NotImplementedError()

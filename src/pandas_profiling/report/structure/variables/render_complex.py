@@ -17,7 +17,6 @@ from pandas_profiling.visualisation.plot import scatter_complex
 
 def render_complex(config: Settings, summary: dict) -> dict:
     varid = summary["varid"]
-    template_variables = {}
     image_format = config.plot.image_format
 
     # Top
@@ -76,10 +75,11 @@ def render_complex(config: Settings, summary: dict) -> dict:
 
     placeholder = HTML("")
 
-    template_variables["top"] = Container(
-        [info, table1, table2, placeholder], sequence_type="grid"
-    )
-
+    template_variables = {
+        "top": Container(
+            [info, table1, table2, placeholder], sequence_type="grid"
+        )
+    }
     # Bottom
     items = [
         Image(

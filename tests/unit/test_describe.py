@@ -76,14 +76,12 @@ def recoding_data():
         ],
         "y": ["dog", "dog", "dog", "dog", "cat", "cat", "camel", "camel"],
     }
-    df = pd.DataFrame(data)
-
-    return df
+    return pd.DataFrame(data)
 
 
 @pytest.fixture
 def describe_data():
-    data = {
+    return {
         "id": [chr(97 + c) for c in range(1, 9)] + ["d"],
         "x": [50, 50, -10, 0, 0, 5, 15, -3, np.nan],
         "y": [
@@ -170,7 +168,6 @@ def describe_data():
             (17, 18),
         ],
     }
-    return data
 
 
 @pytest.fixture

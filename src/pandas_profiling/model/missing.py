@@ -124,10 +124,8 @@ def get_missing_diagram(
     if result is None:
         return None
 
-    missing = {
+    return {
         "name": settings["name"],
         "caption": settings["caption"],
         "matrix": result,
     }
-
-    return missing

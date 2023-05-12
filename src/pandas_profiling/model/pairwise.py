@@ -16,18 +16,14 @@ def get_scatter_tasks(
     if len(targets) == 0:
         targets = continuous_variables
 
-    tasks = [(x, y) for y in continuous_variables for x in targets]
-    return tasks
+    return [(x, y) for y in continuous_variables for x in targets]
 
 
 def get_scatter_plot(
     config: Settings, df: pd.DataFrame, x: Any, y: Any, continuous_variables: list
 ) -> str:
     if x in continuous_variables:
-        if y == x:
-            df_temp = df[[x]].dropna()
-        else:
-            df_temp = df[[x, y]].dropna()
+        df_temp = df[[x]].dropna() if y == x else df[[x, y]].dropna()
         return scatter_pairwise(config, df_temp[x], df_temp[y], x, y)
     else:
         return ""

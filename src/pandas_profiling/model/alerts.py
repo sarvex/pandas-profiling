@@ -231,23 +231,23 @@ def supported_alerts(summary: dict) -> List[Alert]:
         )
     if summary.get("n_distinct", np.nan) == 1:
         summary["mode"] = summary["value_counts_without_nan"].index[0]
-        alerts.append(
-            Alert(
-                alert_type=AlertType.CONSTANT,
-                fields={"n_distinct"},
-            )
-        )
-        alerts.append(
-            Alert(
-                alert_type=AlertType.REJECTED,
-                fields=set(),
+        alerts.extend(
+            (
+                Alert(
+                    alert_type=AlertType.CONSTANT,
+                    fields={"n_distinct"},
+                ),
+                Alert(
+                    alert_type=AlertType.REJECTED,
+                    fields=set(),
+                ),
             )
         )
     return alerts
 
 
 def unsupported_alerts(summary: Dict[str, Any]) -> List[Alert]:
-    alerts = [
+    return [
         Alert(
             alert_type=AlertType.UNSUPPORTED,
             fields=set(),
@@ -257,7 +257,6 @@ def unsupported_alerts(summary: Dict[str, Any]) -> List[Alert]:
             fields=set(),
         ),
     ]
-    return alerts
 
 
 def check_variable_alerts(config: Settings, col: str, description: dict) -> List[Alert]:
@@ -298,14 +297,14 @@ def check_correlation_alerts(config: Settings, correlations: dict) -> List[Alert
             threshold = config.correlations[corr].threshold
             correlated_mapping = perform_check_correlation(matrix, threshold)
             if len(correlated_mapping) > 0:
-                for k, v in correlated_mapping.items():
-                    alerts.append(
-                        Alert(
-                            column_name=k,
-                            alert_type=AlertType.HIGH_CORRELATION,
-                            values={"corr": corr, "fields": v},
-                        )
+                alerts.extend(
+                    Alert(
+                        column_name=k,
+                        alert_type=AlertType.HIGH_CORRELATION,
+                        values={"corr": corr, "fields": v},
                     )
+                    for k, v in correlated_mapping.items()
+                )
     return alerts
 
 

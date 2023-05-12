@@ -69,17 +69,15 @@ def unicode_summary_vc(vc: pd.Series) -> dict:
     char_to_category_short = {key: category(key) for key in character_counts.keys()}
     char_to_script = {key: script(key) for key in character_counts.keys()}
 
-    summary.update(
-        {
-            "category_alias_values": {
-                key: category_long(value)
-                for key, value in char_to_category_short.items()
-            },
-            "block_alias_values": {
-                key: block_abbr(value) for key, value in char_to_block.items()
-            },
-        }
-    )
+    summary |= {
+        "category_alias_values": {
+            key: category_long(value)
+            for key, value in char_to_category_short.items()
+        },
+        "block_alias_values": {
+            key: block_abbr(value) for key, value in char_to_block.items()
+        },
+    }
 
     # Retrieve original distribution
     block_alias_counts: Counter = Counter()
@@ -162,7 +160,7 @@ def word_summary_vc(vc: pd.Series, stop_words: List[str] = []) -> dict:
     word_counts = word_counts.sort_values(ascending=False)
 
     # Remove stop words
-    if len(stop_words) > 0:
+    if stop_words:
         stop_words = [x.lower() for x in stop_words]
         word_counts = word_counts.loc[~word_counts.index.isin(stop_words)]
 
@@ -176,17 +174,17 @@ def length_summary_vc(vc: pd.Series) -> dict:
     length_counts = length_counts.groupby(level=0, sort=False).sum()
     length_counts = length_counts.sort_values(ascending=False)
 
-    summary = {
+    return {
         "max_length": np.max(length_counts.index),
-        "mean_length": np.average(length_counts.index, weights=length_counts.values),
+        "mean_length": np.average(
+            length_counts.index, weights=length_counts.values
+        ),
         "median_length": weighted_median(
             length_counts.index.values, weights=length_counts.values
         ),
         "min_length": np.min(length_counts.index),
         "length_histogram": length_counts,
     }
-
-    return summary
 
 
 @describe_categorical_1d.register
@@ -215,14 +213,14 @@ def pandas_describe_categorical_1d(
 
     redact = config.vars.cat.redact
     if not redact:
-        summary.update({"first_rows": series.head(5)})
+        summary["first_rows"] = series.head(5)
 
     chi_squared_threshold = config.vars.num.chi_squared_threshold
     if chi_squared_threshold > 0.0:
         summary["chi_squared"] = chi_square(histogram=value_counts.values)
 
     if config.vars.cat.length:
-        summary.update(length_summary_vc(value_counts))
+        summary |= length_summary_vc(value_counts)
         summary.update(
             histogram_compute(
                 config,

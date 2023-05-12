@@ -40,11 +40,7 @@ def pandas_describe_counts(
             n_missing = 0
             value_counts_without_nan = value_counts_with_nan
 
-        summary.update(
-            {
-                "value_counts_without_nan": value_counts_without_nan,
-            }
-        )
+        summary["value_counts_without_nan"] = value_counts_without_nan
         try:
             summary["value_counts_index_sorted"] = summary[
                 "value_counts_without_nan"

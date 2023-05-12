@@ -20,10 +20,7 @@ def update(d: dict, u: Mapping) -> dict:
         The merged dictionary.
     """
     for k, v in u.items():
-        if isinstance(v, collections.abc.Mapping):
-            d[k] = update(d.get(k, {}), v)
-        else:
-            d[k] = v
+        d[k] = update(d.get(k, {}), v) if isinstance(v, collections.abc.Mapping) else v
     return d
 
 
@@ -87,4 +84,4 @@ def convert_timestamp_to_datetime(timestamp: int) -> datetime:
     if timestamp >= 0:
         return datetime.fromtimestamp(timestamp)
     else:
-        return datetime(1970, 1, 1) + timedelta(seconds=int(timestamp))
+        return datetime(1970, 1, 1) + timedelta(seconds=timestamp)

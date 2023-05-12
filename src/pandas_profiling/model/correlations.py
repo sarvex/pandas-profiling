@@ -127,9 +127,8 @@ def perform_check_correlation(
 
 
 def get_active_correlations(config: Settings) -> List[str]:
-    correlation_names = [
+    return [
         correlation_name
         for correlation_name in config.correlations.keys()
         if config.correlations[correlation_name].calculate
     ]
-    return correlation_names

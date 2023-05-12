@@ -46,7 +46,7 @@ def pandas_describe_file_1d(
     if not hasattr(series, "str"):
         raise ValueError("series should have .str accessor")
 
-    summary.update(file_summary(series))
+    summary |= file_summary(series)
     summary.update(
         histogram_compute(
             config,

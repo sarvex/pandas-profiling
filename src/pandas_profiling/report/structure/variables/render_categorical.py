@@ -26,7 +26,7 @@ from pandas_profiling.visualisation.plot import histogram, pie_plot
 def render_categorical_frequency(
     config: Settings, summary: dict, varid: str
 ) -> Renderable:
-    frequency_table = Table(
+    return Table(
         [
             {
                 "name": "Unique",
@@ -42,8 +42,6 @@ def render_categorical_frequency(
         name="Unique",
         anchor_id=f"{varid}_unique_stats",
     )
-
-    return frequency_table
 
 
 def render_categorical_length(

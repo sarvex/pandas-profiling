@@ -86,6 +86,8 @@ def typeset_types(config: Settings) -> Set[visions.VisionsBaseType]:
         def contains_op(series: pd.Series, state: dict) -> bool:
             return pdt.is_datetime64_any_dtype(series)
 
+
+
     class Categorical(visions.VisionsBaseType):
         @staticmethod
         def get_relations() -> Sequence[TypeRelation]:
@@ -105,15 +107,15 @@ def typeset_types(config: Settings) -> Set[visions.VisionsBaseType]:
         @series_not_empty
         @series_handle_nulls
         def contains_op(series: pd.Series, state: dict) -> bool:
-            is_valid_dtype = pdt.is_categorical_dtype(series) and not pdt.is_bool_dtype(
+            if is_valid_dtype := pdt.is_categorical_dtype(
                 series
-            )
-            if is_valid_dtype:
+            ) and not pdt.is_bool_dtype(series):
                 return True
             elif not pdt.is_object_dtype(series):
                 return pandas_has_string_dtype_flag and pdt.is_string_dtype(series)
 
             return series_is_string(series, state)
+
 
     class Boolean(visions.VisionsBaseType):
         @staticmethod

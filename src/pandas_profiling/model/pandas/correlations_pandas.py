@@ -60,10 +60,7 @@ def _cramers_corrected_stat(confusion_matrix: pd.DataFrame, correction: bool) ->
         rcorr = r - ((r - 1.0) ** 2.0) / (n - 1.0)
         kcorr = k - ((k - 1.0) ** 2.0) / (n - 1.0)
         rkcorr = min((kcorr - 1.0), (rcorr - 1.0))
-        if rkcorr == 0.0:
-            corr = 1.0
-        else:
-            corr = np.sqrt(phi2corr / rkcorr)
+        corr = 1.0 if rkcorr == 0.0 else np.sqrt(phi2corr / rkcorr)
     return corr
 
 
@@ -109,10 +106,7 @@ def pandas_phik_compute(
     intcols = {
         key
         for key, value in summary.items()
-        # DateTime currently excluded
-        # In some use cases, it makes sense to convert it to interval
-        # See https://github.com/KaveIO/PhiK/issues/7
-        if value["type"] == "Numeric" and 1 < value["n_distinct"]
+        if value["type"] == "Numeric" and value["n_distinct"] > 1
     }
 
     selcols = {

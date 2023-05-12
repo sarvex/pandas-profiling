@@ -86,10 +86,7 @@ def decode_byte_exif(exif_val: Union[str, bytes]) -> str:
     Returns:
 
     """
-    if isinstance(exif_val, str):
-        return exif_val
-    else:
-        return exif_val.decode()
+    return exif_val if isinstance(exif_val, str) else exif_val.decode()
 
 
 def extract_exif(image: Image) -> dict:
@@ -181,9 +178,8 @@ def extract_image_information(
     Returns:
         A dict containing image information
     """
-    information: dict = {}
     image = open_image(path)
-    information["opened"] = image is not None
+    information: dict = {"opened": image is not None}
     if image is not None:
         information["truncated"] = is_image_truncated(image)
         if not information["truncated"]:
@@ -222,7 +218,7 @@ def image_summary(series: pd.Series, exif: bool = False, hash: bool = False) -> 
     }
 
     image_widths = summary["image_dimensions"].map(lambda x: x[0])
-    summary.update(named_aggregate_summary(image_widths, "width"))
+    summary |= named_aggregate_summary(image_widths, "width")
     image_heights = summary["image_dimensions"].map(lambda x: x[1])
     summary.update(named_aggregate_summary(image_heights, "height"))
     image_areas = image_widths * image_heights
@@ -250,6 +246,6 @@ def pandas_describe_image_1d(
     if not hasattr(series, "str"):
         raise ValueError("series should have .str accessor")
 
-    summary.update(image_summary(series, config.vars.image.exif))
+    summary |= image_summary(series, config.vars.image.exif)
 
     return config, series, summary

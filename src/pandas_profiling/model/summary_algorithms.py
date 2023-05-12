@@ -33,11 +33,9 @@ def histogram_compute(
     name: str = "histogram",
     weights: Optional[np.ndarray] = None,
 ) -> dict:
-    stats = {}
     bins = config.plot.histogram.bins
     bins_arg = "auto" if bins == 0 else min(bins, n_unique)
-    stats[name] = np.histogram(finite_values, bins=bins_arg, weights=weights)
-
+    stats = {name: np.histogram(finite_values, bins=bins_arg, weights=weights)}
     max_bins = config.plot.histogram.max_bins
     if bins_arg == "auto" and len(stats[name][1]) > max_bins:
         stats[name] = np.histogram(finite_values, bins=max_bins, weights=None)
@@ -85,14 +83,12 @@ def series_handle_nulls(
 
 
 def named_aggregate_summary(series: pd.Series, key: str) -> dict:
-    summary = {
+    return {
         f"max_{key}": np.max(series),
         f"mean_{key}": np.mean(series),
         f"median_{key}": np.median(series),
         f"min_{key}": np.min(series),
     }
-
-    return summary
 
 
 @multimethod

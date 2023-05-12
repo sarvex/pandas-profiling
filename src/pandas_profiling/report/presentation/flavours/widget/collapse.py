@@ -31,10 +31,7 @@ class WidgetCollapse(Collapse):
         else:
 
             def toggle_func(widg: dict) -> None:
-                if widg["new"]:
-                    display = ""
-                else:
-                    display = "none"
+                display = "" if widg["new"] else "none"
                 item.layout.display = display
 
         toggle_func({"new": False})

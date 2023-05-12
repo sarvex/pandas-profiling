@@ -53,11 +53,18 @@ def create_html_assets(config: Settings, output_file: Path) -> None:
             if theme == Theme.united:
                 css.append("wrapper/assets/united.bootstrap.min.css")
         else:
-            css.append("wrapper/assets/bootstrap.min.css")
-            css.append("wrapper/assets/bootstrap-theme.min.css")
-        js.append("wrapper/assets/jquery-1.12.4.min.js")
-        js.append("wrapper/assets/bootstrap.min.js")
-
+            css.extend(
+                (
+                    "wrapper/assets/bootstrap.min.css",
+                    "wrapper/assets/bootstrap-theme.min.css",
+                )
+            )
+        js.extend(
+            (
+                "wrapper/assets/jquery-1.12.4.min.js",
+                "wrapper/assets/bootstrap.min.js",
+            )
+        )
     css.append("wrapper/assets/style.css")
     js.append("wrapper/assets/script.js")
 

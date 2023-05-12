@@ -36,19 +36,18 @@ class WidgetAlerts(Alerts):
             if type_name == "rejected":
                 continue
 
-            items.append(
-                HTML(
-                    templates.template(f"alerts/alert_{type_name}.html").render(
-                        alert=alert
-                    )
+            items.extend(
+                (
+                    HTML(
+                        templates.template(
+                            f"alerts/alert_{type_name}.html"
+                        ).render(alert=alert)
+                    ),
+                    Button(
+                        description=type_name.replace("_", " ").capitalize(),
+                        button_style=styles[type_name],
+                        disabled=True,
+                    ),
                 )
             )
-            items.append(
-                Button(
-                    description=type_name.replace("_", " ").capitalize(),
-                    button_style=styles[type_name],
-                    disabled=True,
-                )
-            )
-
         return get_row(items)

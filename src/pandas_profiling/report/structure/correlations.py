@@ -99,7 +99,7 @@ def get_correlation_items(config: Settings, summary: dict) -> Optional[Renderabl
         anchor_id="correlations_tab",
     )
 
-    if len(items) > 0:
+    if items:
         btn = ToggleButton(
             "Toggle correlation descriptions",
             anchor_id="toggle-correlation-description",

@@ -8,8 +8,7 @@ from pandas_profiling.utils.cache import cache_file
 
 def func(df, **kwargs):
     profile = ProfileReport(df, progress_bar=False, **kwargs)
-    report = profile.to_html()
-    return report
+    return profile.to_html()
 
 
 def test_titanic_explorative(benchmark):

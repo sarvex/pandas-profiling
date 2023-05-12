@@ -20,9 +20,8 @@ def _merge_dictionaries(dict1: dict, dict2: dict) -> dict:
         if isinstance(val, dict):
             dict2_node = dict2.setdefault(key, {})
             _merge_dictionaries(val, dict2_node)
-        else:
-            if key not in dict2:
-                dict2[key] = val
+        elif key not in dict2:
+            dict2[key] = val
 
     return dict2
 

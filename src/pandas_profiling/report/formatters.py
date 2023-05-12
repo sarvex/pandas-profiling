@@ -143,9 +143,7 @@ def fmt_timespan(num_seconds: Any, detailed: bool = False, max_units: int = 3) -
         return text
 
     def coerce_seconds(value: Union[timedelta, int, float]) -> float:
-        if isinstance(value, timedelta):
-            return value.total_seconds()
-        return float(value)
+        return value.total_seconds() if isinstance(value, timedelta) else float(value)
 
     def concatenate(items: List[str]) -> str:
         items = list(items)
@@ -158,42 +156,35 @@ def fmt_timespan(num_seconds: Any, detailed: bool = False, max_units: int = 3) -
 
     def pluralize(count: Any, singular: str, plural: Optional[str] = None) -> str:
         if not plural:
-            plural = singular + "s"
+            plural = f"{singular}s"
         return f"{count} {singular if math.floor(float(count)) == 1 else plural}"
 
     num_seconds = coerce_seconds(num_seconds)
     if num_seconds < 60 and not detailed:
         # Fast path.
         return pluralize(round_number(num_seconds), "second")
-    else:
-        # Slow path.
-        result = []
-        num_seconds = decimal.Decimal(str(num_seconds))
-        relevant_units = list(reversed(time_units[0 if detailed else 3 :]))
-        for unit in relevant_units:
-            # Extract the unit count from the remaining time.
-            divider = decimal.Decimal(str(unit["divider"]))
-            count = num_seconds / divider
-            num_seconds %= divider
+    # Slow path.
+    result = []
+    num_seconds = decimal.Decimal(str(num_seconds))
+    relevant_units = list(reversed(time_units[0 if detailed else 3 :]))
+    for unit in relevant_units:
+        # Extract the unit count from the remaining time.
+        divider = decimal.Decimal(str(unit["divider"]))
+        count = num_seconds / divider
+        num_seconds %= divider
             # Round the unit count appropriately.
-            if unit != relevant_units[-1]:
-                # Integer rounding for all but the smallest unit.
-                count = int(count)
-            else:
-                # Floating point rounding for the smallest unit.
-                count = round_number(count)
-            # Only include relevant units in the result.
-            if count not in (0, "0"):
-                result.append(pluralize(count, unit["singular"], unit["plural"]))
-        if len(result) == 1:
-            # A single count/unit combination.
-            return result[0]
-        else:
-            if not detailed:
-                # Remove `insignificant' data from the formatted timespan.
-                result = result[:max_units]
-            # Format the timespan in a readable way.
-            return concatenate(result)
+        count = int(count) if unit != relevant_units[-1] else round_number(count)
+        # Only include relevant units in the result.
+        if count not in (0, "0"):
+            result.append(pluralize(count, unit["singular"], unit["plural"]))
+    if len(result) == 1:
+        # A single count/unit combination.
+        return result[0]
+    if not detailed:
+        # Remove `insignificant' data from the formatted timespan.
+        result = result[:max_units]
+    # Format the timespan in a readable way.
+    return concatenate(result)
 
 
 def fmt_numeric(value: float, precision: int = 10) -> str:
